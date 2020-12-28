@@ -1,8 +1,8 @@
-# Vision module package
+# Mission Planning Package
 
-## description
+## Description
 
-This is a template: replace, remove, and add where required. Describe here what this package does and what it's meant for in a few sentences.
+This module starts with the planning layer which contains task manager, it sends next mission to be executed to the execution layer based on the labeled camera feed, in the execution layer the task controller takes input (from task manager) the next mission to be executed and the task feedback ( from task failure handler which takes its readings from sensor fusion), then splits the mission to primitive tasks in correct order to stack them in the scheduler, the scheduler  sends tasks id to global planner to start execution and also task scheduler sends task id to task failure handler for monitoring the mission execution, the feedback handler takes input (from scheduler) the current executing mission ID to help knowing what feedback threshold to expect and which sensors to get its readings from, then sends feedback on each task to task controller and the task controller provide a general feedback from several tasks connected to the same mission and send this general feedback to task manager to be able to log the status in log file, here we have two cases one in case of success therefore there is nothing to be done, and two in case of failure, the task manager decides to redo the mission with a number of attempts and it may also delete the mission and its dependent mission from the scheduler.
 
 ### License
 
@@ -12,7 +12,7 @@ The source code is released under a [GNU GENERAL PUBLIC LICENSE](https://github.
 Affiliation: [VorteX-Co](https://vortex-co.com/home)<br />
 Maintainer: vortex-co, info@vortex-co.com**
 
-The Vision module package has been tested under [ROS] Indigo, Melodic and Noetic on respectively Ubuntu 14.04, 18.04 and 20.04.
+The mission planning module package has been tested under [ROS2] Eloquent Elusor on Ubuntu 18.04.
 
 ## Table of contents
 * [Installation](#Installation)
@@ -25,136 +25,138 @@ The Vision module package has been tested under [ROS] Indigo, Melodic and Noetic
 ## Installation
 ### Installation from Packages
 
-To install all packages from the this repository as Debian packages use
-
-    sudo apt-get install ros-noetic-...
-    
-Or better, use `rosdep`:
-
-	sudo rosdep install --from-paths src
+Open a terminal, clone the repository
+~~~
+	cd ~/ros2_ws/ #use your current ros2 workspace folder
+	git clone https://github.com/VorteX-co/VAUV.git
+~~~   
 
 ### Building from Source
 
 #### Dependencies
 
-- [Robot Operating System (ROS)](http://wiki.ros.org) (middleware for robotics),
-- [Eigen] (linear algebra library)
-
-	sudo rosdep install --from-paths src
+- [Colcon](https://index.ros.org/doc/ros2/Tutorials/Colcon-Tutorial/)
+~~~
+	sudo apt install python3-colcon-common-extensions
+~~~ 
+- [Robot Operating System (ROS2)](https://index.ros.org/doc/ros2/Installation/Eloquent/Linux-Install-Debians/) (Install Eloquent as Debian Package).
 
 #### Building
 
-To build from source, clone the latest version from this repository into your  workspace and compile the package using
-
-	cd workspace/src
-	git clone https://github.com/VorteX-co/VAUV/tree/master/Software/vortex_ws/src/vision
-	cd ../
-	rosdep install --from-paths . --ignore-src
-	catkin_make
-
-### Running in Docker
-
-Docker is a great way to run an application with all dependencies and libraries bundles together. 
-Make sure to [install Docker](https://docs.docker.com/get-docker/) first. 
-
-First, spin up a simple container:
-
-	docker run -ti --rm --name ros-container ros:noetic bash
-	
-This downloads the `ros:noetic` image from the Docker Hub, indicates that it requires an interactive terminal (`-t, -i`), gives it a name (`--name`), removes it after you exit the container (`--rm`) and runs a command (`bash`).
-
-Now, create a catkin workspace, clone the package, build it, done!
-
-	apt-get update && apt-get install -y git
-	mkdir -p /ws/src && cd /ws/src
-	git clone https://github.com/leggedrobotics/ros_best_practices.git
-	cd ..
-	rosdep install --from-path src
-	catkin_make
-	source devel/setup.bash
-	roslaunch ros_package_template ros_package_template.launch
+To build from source, clone the latest version from this repository into your workspace and compile the package using 
+~~~
+	cd ~/ros2_ws/VAUV/Software/vortex_ws/src/mission_planning/src/
+	source /opt/ros/eloquent/setup.bash
+	colcon build --symlink-install
+~~~
 
 ## Usage
 
-Describe the quickest way to run this software, for example:
-
-Run the main node with
-
-	roslaunch ros_package_template ros_package_template.launch
+First go to project location and source it
+~~~
+	cd ~/ros2_ws/VAUV/Software/vortex_ws/src/mission_planning/src/
+	source install/setup.bash
+~~~
+- Then we can start node by node with
+~~~
+	ros2 run mission_planning class_name
+~~~
+- or launch file with
+~~~
+	ros2 launch mission_planning launch_file_name.launch.py
+~~~
 
 ## Config files
 
-Config file folder/set 1
-
-* **config_file_1.yaml** Shortly explain the content of this config file
-
-Config file folder/set 2
-
-* **...**
+...
 
 ## Launch files
 
-* **launch_file_1.launch:** shortly explain what is launched (e.g standard simulation, simulation with gdb,...)
-
-     Argument set 1
-
-     - **`argument_1`** Short description (e.g. as commented in launch file). Default: `default_value`.
-
-    Argument set 2
-
-    - **`...`**
-
-* **...**
+...
 
 ## Nodes
 
-### ros_package_template
+### task_manager_node
 
-Reads temperature measurements and computed the average.
-
+Reads labeled camera feed ,detects the mission the AUV is currently seeing and determines the next mission to be executed.
 
 #### Subscribed Topics
 
-* **`/temperature`** ([sensor_msgs/Temperature])
-
-	The temperature measurements from which the average is computed.
-
+...
 
 #### Published Topics
 
 ...
 
-
 #### Services
 
-* **`get_average`** ([std_srvs/Trigger])
-
-	Returns information about the current average. For example, you can trigger the computation from the console with
-
-		rosservice call /ros_package_template/get_average
-
+...
 
 #### Parameters
 
-* **`subscriber_topic`** (string, default: "/temperature")
+...
 
-	The name of the input topic.
+### task_controller_node
 
-* **`cache_size`** (int, default: 200, min: 0, max: 1000)
+Maps each mission id to a corresponding finite state machine, Loops on each current state in the FSM until this state changes based on the feedback from the task failure handler until the FSM is finished and another one takes its place.
 
-	The size of the cache.
-
-
-### NODE_B_NAME
+#### Subscribed Topics
 
 ...
+
+#### Published Topics
+
+...
+
+#### Services
+
+...
+
+#### Parameters
+
+...
+
+### scheduler_node
+
+Takes task ID to schedule it, manages the available time for a series of tasks and determines which scheduled task to be executed.
+
+
+#### Subscribed Topics
+
+...
+
+#### Published Topics
+
+...
+
+#### Services
+
+...
+
+#### Parameters
+
+...
+
+### task_failure_handler_node
+
+Takes the current executing task ID and Subscribes on sensor’s topics to get its readings, then publishes feedback on each task.
+
+#### Subscribed Topics	
+
+...
+
+#### Published Topics
+	
+...
+
+#### Services
+
+...
+
+#### Parameters
+
+...
+
 ## Hardware
-This package acess the following hardware:
 
-* 
-* 
-* 
-
-[ROS]: http://www.ros.org
-[rviz]: http://wiki.ros.org/rviz
-[Eigen]: http://eigen.tuxfamily.org
+This package is only for planning, So it doesn't directly use any sort of hardware.
