@@ -12,13 +12,14 @@ The source code is released under a [GNU GENERAL PUBLIC LICENSE](https://github.
 Affiliation: [VorteX-Co](https://vortex-co.com/home)<br />
 Maintainer: vortex-co, info@vortex-co.com**
 
-The mission planning module package has been tested under [ROS2] Eloquent Elusor on Ubuntu 18.04.
+The mission planning module package has been tested under [ROS2](https://index.ros.org/doc/ros2/) Eloquent Elusor on Ubuntu 18.04.
 
 ## Table of contents
 * [Installation](#Installation)
 * [Usage](#Usage)
 * [Config files](#Config-files)
 * [Launch files](#Launch-files)
+* [Nodes](#Nodes)
 * [Hardware](#hardware)
 
 
