@@ -9,8 +9,8 @@ In the **execution layer** :
 * The **scheduler**  sends tasks id to **global planner** to start execution and also **task scheduler** sends task id to **task failure handler** for monitoring the mission execution.
 
 * The **feedback handler**  takes input (from scheduler) the current executing mission ID to help knowing what feedback threshold to expect and which sensors to get its readings from, then sends feedback on each task to task controller and the **task controller** provide a general feedback from several tasks connected to the same mission and send this general feedback to task manager to be able to log the status in log file ,here we have two cases 
-** In case of success therefore there is nothing to be done!
-** In case of failure, the task manager decides to redo the mission with a number of attempts and it may also delete the 
+*	 In case of success therefore there is nothing to be done!
+*	 In case of failure, the task manager decides to redo the mission with a number of attempts and it may also delete the 
 
 ### License
 
